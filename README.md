@@ -9,7 +9,9 @@ built-in simulator replaces the sensors.
 
 ## Status
 
-Work in progress (week 1: simulator and live values).
+Work in progress. Done: live simulator, real-time charts (Qt Graphs),
+temperature gauge, sidebar navigation, light/dark theme.
+Next: alarms, SQLite history and settings.
 
 ## Planned features
 
