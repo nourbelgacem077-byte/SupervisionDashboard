@@ -35,11 +35,7 @@ Instructions coming soon.
 
 MIT
 
-## DEMO
+## Demo
 
-\## Demo
-
-
-
-!\[Dashboard demo](docs/demo.gif)
+![Dashboard demo](docs/demo.gif)
 
