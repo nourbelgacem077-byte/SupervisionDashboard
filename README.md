@@ -1,4 +1,5 @@
 # SupervisionDashboard
+
 Industrial supervision dashboard built with Qt 6, QML and C++ (simulated data)
 
 Desktop application that monitors a simulated electrical installation
@@ -15,12 +16,12 @@ Next: alarms, SQLite history and settings.
 
 ## Planned features
 
-- Real-time measurements: voltage, current, power, temperature
-- Live chart (60 s sliding window) and temperature gauge
-- Alarms with Warning / Critical levels, hysteresis and acknowledgment
-- History stored in SQLite, with CSV export
-- Settings saved between sessions
-- Fault injection buttons to test alarms
+* Real-time measurements: voltage, current, power, temperature
+* Live chart (60 s sliding window) and temperature gauge
+* Alarms with Warning / Critical levels, hysteresis and acknowledgment
+* History stored in SQLite, with CSV export
+* Settings saved between sessions
+* Fault injection buttons to test alarms
 
 ## Tech stack
 
@@ -33,3 +34,10 @@ Instructions coming soon.
 ## License
 
 MIT
+
+\## Demo
+
+
+
+!\[Dashboard demo](docs/demo.gif)
+
