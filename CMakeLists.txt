@@ -66,3 +66,15 @@ install(TARGETS appSupervisionDashboard
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+# ---------- Tests ----------
+find_package(Qt6 REQUIRED COMPONENTS Test)
+enable_testing()
+
+qt_add_executable(tst_alarmrule
+    tests/tst_alarmrule.cpp
+    alarmrule.cpp
+    alarmrule.h
+)
+target_include_directories(tst_alarmrule PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(tst_alarmrule PRIVATE Qt6::Test)
+add_test(NAME tst_alarmrule COMMAND tst_alarmrule)
