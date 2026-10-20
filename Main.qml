@@ -41,7 +41,7 @@ Window {
             DashboardPage { simulator: sim }
             HistoryPage { }
             AlarmsPage { alarmModel: alarms; simulator: sim }
-            PlaceholderPage { title: "Settings" }
+            SettingsPage { settings: appSettings }
         }
     }
 }

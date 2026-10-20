@@ -42,6 +42,9 @@ qt_add_qml_module(appSupervisionDashboard
         QML_FILES ChoiceBar.qml
         QML_FILES HistoryPage.qml
         SOURCES appsettings.h appsettings.cpp
+        QML_FILES ThresholdRow.qml
+        QML_FILES SettingsPage.qml
+        QML_FILES NumberField.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
