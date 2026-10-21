@@ -38,9 +38,9 @@ private:
         double hysteresis = 0.0;
     };
 
-    static QString keyId(const QString &quantity);        // "" si grandeur inconnue
-    static Limits defaultsFor(const QString &quantity);   // valeurs par défaut
-    void save(const QString &quantity);                   // écrit dans m_store
+    static QString keyId(const QString &quantity);
+    static Limits defaultsFor(const QString &quantity);
+    void save(const QString &quantity);
 
     QSettings m_store;
     QHash<QString, Limits> m_limits;

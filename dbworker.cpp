@@ -14,11 +14,11 @@ DbWorker::DbWorker(const QString &dbPath, QObject *parent)
 
 DbWorker::~DbWorker()
 {
-    flush();   // valider ce qui reste en attente
+    flush();
 
     if (QSqlDatabase::contains(m_connectionName)) {
         {
-            // db vit seulement dans ce bloc : elle disparaît avant removeDatabase
+
             QSqlDatabase db = QSqlDatabase::database(m_connectionName);
             db.close();
         }
@@ -67,7 +67,7 @@ void DbWorker::insertSample(qint64 timestampMs, double voltage, double current,
 
     QSqlDatabase db = QSqlDatabase::database(m_connectionName);
 
-    // nouvelle transaction si aucun échantillon n'est en attente
+
     if (m_pending == 0) {
         if (!db.transaction()) {
             qWarning() << "Transaction impossible :" << db.lastError().text();

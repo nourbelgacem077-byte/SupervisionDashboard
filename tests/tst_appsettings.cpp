@@ -1,3 +1,4 @@
+
 #include <QDir>
 #include <QFile>
 #include <QSettings>
@@ -7,14 +8,14 @@
 
 #include "appsettings.h"
 
-class TestAppSettings : public QObject
+    class TestAppSettings : public QObject
 {
     Q_OBJECT
 
 private:
-    QTemporaryDir m_dir;   // dossier temporaire : supprimé à la fin des tests
+    QTemporaryDir m_dir;   // Temporary directory: removed when the tests finish
 
-    // chemin du fichier de réglages utilisé par AppSettings
+    // Path to the settings file used by AppSettings
     static QString settingsFile()
     {
         QSettings probe(QSettings::IniFormat, QSettings::UserScope,
@@ -43,28 +44,28 @@ private slots:
     void corruptedFileFallsBack();
 };
 
-// Une seule fois, avant tous les tests
+// Runs once before all tests
 void TestAppSettings::initTestCase()
 {
     QVERIFY(m_dir.isValid());
 
-    // redirige TOUS les QSettings du test vers le dossier temporaire
+    // Redirect ALL QSettings instances used by the test to the temporary directory
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, m_dir.path());
 
-    // sécurité : si la redirection a échoué, on s'arrête AVANT de supprimer un vrai fichier
+    // Safety check: if redirection failed, stop BEFORE deleting any real settings file
     const QString file = QDir::fromNativeSeparators(settingsFile());
     const QString base = QDir::fromNativeSeparators(m_dir.path());
     QVERIFY2(file.startsWith(base, Qt::CaseInsensitive),
-             qPrintable("Redirection des reglages echouee : " + file));
+             qPrintable("Settings redirection failed: " + file));
 }
 
-// Avant CHAQUE test : on repart d'un fichier de réglages vide
+// Before EACH test: start with an empty settings file
 void TestAppSettings::init()
 {
     QFile::remove(settingsFile());
 }
 
-// Premier lancement : valeurs par défaut des quatre grandeurs
+// First run: default values for all four quantities
 void TestAppSettings::defaultsOnFirstRun()
 {
     AppSettings s;
@@ -86,7 +87,7 @@ void TestAppSettings::defaultsOnFirstRun()
     QCOMPARE(s.hysteresis("Température"), 5.0);
 }
 
-// Les quatre noms, dans l'ordre d'affichage
+// The four names, in display order
 void TestAppSettings::quantitiesList()
 {
     AppSettings s;
@@ -94,7 +95,7 @@ void TestAppSettings::quantitiesList()
     QCOMPARE(s.quantities(), expected);
 }
 
-// Une grandeur inconnue donne 0 (aucune erreur)
+// An unknown quantity returns 0 (no error)
 void TestAppSettings::unknownQuantityGetters()
 {
     AppSettings s;
@@ -103,7 +104,7 @@ void TestAppSettings::unknownQuantityGetters()
     QCOMPARE(s.hysteresis("Humidité"), 0.0);
 }
 
-// Des valeurs cohérentes sont acceptées, enregistrées, et annoncées par un signal
+// Valid threshold values are accepted, saved, and reported through a signal
 void TestAppSettings::acceptValidThresholds()
 {
     AppSettings s;
@@ -117,7 +118,7 @@ void TestAppSettings::acceptValidThresholds()
     QCOMPARE(count(spy), 1);
 }
 
-// Modifier une grandeur ne touche pas aux autres
+// Changing one quantity does not affect the others
 void TestAppSettings::otherQuantitiesUnaffected()
 {
     AppSettings s;
@@ -128,7 +129,7 @@ void TestAppSettings::otherQuantitiesUnaffected()
     QCOMPARE(s.warning("Température"), 75.0);
 }
 
-// Warning supérieur à Critical : refusé, rien ne change, aucun signal
+// Warning greater than Critical: rejected, no changes, no signal
 void TestAppSettings::rejectWarningAboveCritical()
 {
     AppSettings s;
@@ -142,7 +143,7 @@ void TestAppSettings::rejectWarningAboveCritical()
     QCOMPARE(count(spy), 0);
 }
 
-// Cas limite : Warning égal à Critical est aussi refusé
+// Boundary case: Warning equal to Critical is also rejected
 void TestAppSettings::rejectWarningEqualsCritical()
 {
     AppSettings s;
@@ -150,7 +151,7 @@ void TestAppSettings::rejectWarningEqualsCritical()
     QCOMPARE(s.warning("Tension"), 250.0);
 }
 
-// Une hystérésis négative est refusée
+// Negative hysteresis is rejected
 void TestAppSettings::rejectNegativeHysteresis()
 {
     AppSettings s;
@@ -162,7 +163,7 @@ void TestAppSettings::rejectNegativeHysteresis()
     QCOMPARE(count(spy), 0);
 }
 
-// Cas limite : une hystérésis de 0 est valide
+// Boundary case: zero hysteresis is valid
 void TestAppSettings::acceptZeroHysteresis()
 {
     AppSettings s;
@@ -170,7 +171,7 @@ void TestAppSettings::acceptZeroHysteresis()
     QCOMPARE(s.hysteresis("Tension"), 0.0);
 }
 
-// Une grandeur inconnue est refusée, sans signal
+// An unknown quantity is rejected without emitting a signal
 void TestAppSettings::rejectUnknownQuantity()
 {
     AppSettings s;
@@ -180,22 +181,22 @@ void TestAppSettings::rejectUnknownQuantity()
     QCOMPARE(count(spy), 0);
 }
 
-// Un autre objet, créé plus tard, relit les valeurs depuis le fichier
+// A new object created later reads the values back from the file
 void TestAppSettings::persistsAcrossInstances()
 {
     {
         AppSettings first;
         QVERIFY(first.setThresholds("Courant", 13.0, 15.0, 1.0));
-    }   // first est détruit : seul le fichier garde la valeur
+    }   // first is destroyed: only the file retains the values
 
     AppSettings second;
     QCOMPARE(second.warning("Courant"), 13.0);
     QCOMPARE(second.critical("Courant"), 15.0);
     QCOMPARE(second.hysteresis("Courant"), 1.0);
-    QCOMPARE(second.warning("Tension"), 250.0);   // inchangée
+    QCOMPARE(second.warning("Tension"), 250.0);   // Unchanged
 }
 
-// resetDefaults : valeurs d'origine, UN SEUL signal, et sauvegarde
+// resetDefaults: restores original values, emits ONE signal, and saves the changes
 void TestAppSettings::resetDefaultsRestores()
 {
     {
@@ -206,23 +207,23 @@ void TestAppSettings::resetDefaultsRestores()
         QSignalSpy spy(&s, &AppSettings::thresholdsChanged);
         s.resetDefaults();
 
-        QCOMPARE(count(spy), 1);   // un signal pour les quatre grandeurs
+        QCOMPARE(count(spy), 1);   // One signal for all four quantities
         QCOMPARE(s.warning("Tension"), 250.0);
         QCOMPARE(s.warning("Courant"), 14.0);
     }
 
-    AppSettings reread;   // la remise à zéro a bien été écrite dans le fichier
+    AppSettings reread;   // The reset values have been written to the file
     QCOMPARE(reread.warning("Tension"), 250.0);
     QCOMPARE(reread.warning("Courant"), 14.0);
 }
 
-// Un fichier modifié à la main avec des valeurs absurdes : retour aux défauts
+// A settings file manually modified with invalid values: falls back to defaults
 void TestAppSettings::corruptedFileFallsBack()
 {
     {
         QSettings raw(QSettings::IniFormat, QSettings::UserScope,
                       "SupervisionDashboard", "settings");
-        raw.setValue("alarms/voltage/warning", 300.0);    // supérieur à critical
+        raw.setValue("alarms/voltage/warning", 300.0);    // Greater than Critical
         raw.setValue("alarms/voltage/critical", 200.0);
         raw.setValue("alarms/voltage/hysteresis", 3.0);
         raw.sync();

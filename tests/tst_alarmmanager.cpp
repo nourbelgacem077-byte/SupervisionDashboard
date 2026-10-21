@@ -1,19 +1,20 @@
+
 #include <QSignalSpy>
 #include <QTest>
 
 #include "alarmmanager.h"
 
-class TestAlarmManager : public QObject
+    class TestAlarmManager : public QObject
 {
     Q_OBJECT
 
 private:
-    // petits outils : des int pour que Qt Test affiche des valeurs lisibles
+
     static int lv(AlarmLevel level) { return static_cast<int>(level); }
     static int count(const AlarmManager &m) { return static_cast<int>(m.events().size()); }
     static int count(const QSignalSpy &s) { return static_cast<int>(s.count()); }
 
-    // règle commune : warning 250, critical 270, hystérésis 3
+    // Common rule: warning at 250, critical at 270, hysteresis of 3
     static void addVoltageRule(AlarmManager &m) { m.addRule("Voltage", 250.0, 270.0, 3.0); }
 
 private slots:
@@ -31,18 +32,18 @@ private slots:
     void invalidAcknowledgeIndex();
 };
 
-// Une grandeur sans règle est ignorée, sans erreur
+
 void TestAlarmManager::unknownQuantityIsIgnored()
 {
     AlarmManager manager;
     addVoltageRule(manager);
 
-    manager.processMeasurement("Humidity", 999.0);   // aucune règle pour Humidity
+    manager.processMeasurement("Humidity", 999.0);
 
     QCOMPARE(count(manager), 0);
 }
 
-// Sous le seuil : aucun événement
+// Below the threshold: no event is created
 void TestAlarmManager::noEventBelowThreshold()
 {
     AlarmManager manager;
@@ -54,7 +55,7 @@ void TestAlarmManager::noEventBelowThreshold()
     QCOMPARE(manager.activeCount(), 0);
 }
 
-// Seuil Warning dépassé : un événement complet
+// Warning threshold exceeded: one complete event is created
 void TestAlarmManager::warningRaised()
 {
     AlarmManager manager;
@@ -71,7 +72,7 @@ void TestAlarmManager::warningRaised()
     QVERIFY(e.time.isValid());
 }
 
-// Seuil Critical dépassé : un événement Critical
+// Critical threshold exceeded: one Critical event is created
 void TestAlarmManager::criticalRaised()
 {
     AlarmManager manager;
@@ -83,7 +84,7 @@ void TestAlarmManager::criticalRaised()
     QCOMPARE(lv(manager.events().at(0).level), lv(AlarmLevel::Critical));
 }
 
-// Rester en Warning ne crée pas de nouvelle alarme
+// Remaining in the Warning state does not create a new alarm
 void TestAlarmManager::noDuplicateWhileStayingWarning()
 {
     AlarmManager manager;
@@ -91,12 +92,12 @@ void TestAlarmManager::noDuplicateWhileStayingWarning()
 
     manager.processMeasurement("Voltage", 251.0);
     manager.processMeasurement("Voltage", 252.0);
-    manager.processMeasurement("Voltage", 249.0);   // hystérésis : toujours Warning
+    manager.processMeasurement("Voltage", 249.0);   // Hysteresis: still in Warning state
 
     QCOMPARE(count(manager), 1);
 }
 
-// Passer de Warning à Critical crée un second événement
+// Escalating from Warning to Critical creates a second event
 void TestAlarmManager::escalationCreatesSecondEvent()
 {
     AlarmManager manager;
@@ -110,48 +111,48 @@ void TestAlarmManager::escalationCreatesSecondEvent()
     QCOMPARE(lv(manager.events().at(1).level), lv(AlarmLevel::Critical));
 }
 
-// Critical vers Warning : on est toujours en situation anormale, donc un événement
+// Transitioning from Critical to Warning: the condition is still abnormal, so an event is created
 void TestAlarmManager::criticalToWarningCreatesEvent()
 {
     AlarmManager manager;
     addVoltageRule(manager);
 
     manager.processMeasurement("Voltage", 275.0);   // Critical
-    manager.processMeasurement("Voltage", 262.0);   // sous 267 : retour à Warning
+    manager.processMeasurement("Voltage", 262.0);   // Below 267: returns to Warning
 
     QCOMPARE(count(manager), 2);
     QCOMPARE(lv(manager.events().at(1).level), lv(AlarmLevel::Warning));
 }
 
-// Retour à Normal : ce n'est pas une alarme
+// Returning to Normal does not create an alarm
 void TestAlarmManager::returnToNormalCreatesNoEvent()
 {
     AlarmManager manager;
     addVoltageRule(manager);
 
-    manager.processMeasurement("Voltage", 251.0);   // Warning : 1 événement
-    manager.processMeasurement("Voltage", 245.0);   // sous 247 : Normal
+    manager.processMeasurement("Voltage", 251.0);   // Warning: 1 event
+    manager.processMeasurement("Voltage", 245.0);   // Below 247: returns to Normal
 
     QCOMPARE(count(manager), 1);
 }
 
-// Chaque grandeur a sa propre règle et sa propre mémoire
+// Each measurement quantity has its own rule and state
 void TestAlarmManager::independentRules()
 {
     AlarmManager manager;
     manager.addRule("Voltage", 250.0, 270.0, 3.0);
     manager.addRule("Temperature", 75.0, 90.0, 5.0);
 
-    manager.processMeasurement("Voltage", 251.0);       // Warning pour Voltage
-    manager.processMeasurement("Temperature", 70.0);    // Normal pour Temperature
+    manager.processMeasurement("Voltage", 251.0);       // Warning for Voltage
+    manager.processMeasurement("Temperature", 70.0);    // Normal for Temperature
     QCOMPARE(count(manager), 1);
 
-    manager.processMeasurement("Temperature", 80.0);    // Warning pour Temperature
+    manager.processMeasurement("Temperature", 80.0);    // Warning for Temperature
     QCOMPARE(count(manager), 2);
     QCOMPARE(manager.events().at(1).quantity, QString("Temperature"));
 }
 
-// Les deux signaux partent une fois par nouvelle alarme
+// Both signals are emitted once for each new alarm
 void TestAlarmManager::signalsEmitted()
 {
     AlarmManager manager;
@@ -165,13 +166,13 @@ void TestAlarmManager::signalsEmitted()
     QCOMPARE(count(raised), 1);
     QCOMPARE(count(changed), 1);
 
-    manager.processMeasurement("Voltage", 252.0);   // rien de nouveau
+    manager.processMeasurement("Voltage", 252.0);   // No new event
 
     QCOMPARE(count(raised), 1);
     QCOMPARE(count(changed), 1);
 }
 
-// Acquitter une alarme : elle n'est plus active
+// Acknowledging an alarm makes it no longer active
 void TestAlarmManager::acknowledgeEvent()
 {
     AlarmManager manager;
@@ -187,14 +188,14 @@ void TestAlarmManager::acknowledgeEvent()
     QCOMPARE(count(changed), 1);
 }
 
-// Un index invalide ne fait rien : ni plantage, ni signal
+// An invalid index has no effect: no crash and no signal emitted
 void TestAlarmManager::invalidAcknowledgeIndex()
 {
     AlarmManager manager;
     addVoltageRule(manager);
     manager.processMeasurement("Voltage", 251.0);
 
-    QSignalSpy changed(&manager, &AlarmManager::eventsChanged);   // créé après l'alarme
+    QSignalSpy changed(&manager, &AlarmManager::eventsChanged);   // Created after the alarm
     manager.acknowledge(5);
     manager.acknowledge(-1);
 

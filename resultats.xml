@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite name="TestAlarmRule" timestamp="2026&#x002D;10&#x002D;20T23:30:54" hostname="DESKTOP&#x002D;AVMTM5T" tests="15" failures="1" errors="0" skipped="0" time="0.007">
+  <properties>
+    <property name="QTestVersion" value="6.12.0"/>
+    <property name="QtVersion" value="6.12.0"/>
+    <property name="QtBuild" value="Qt 6.12.0 (x86_64&#x002D;little_endian&#x002D;llp64 shared (dynamic) release build; by GCC 15.1.0)"/>
+  </properties>
+  <testcase name="initTestCase" classname="TestAlarmRule" time="0.000"/>
+  <testcase name="startsNormal" classname="TestAlarmRule" time="0.000"/>
+  <testcase name="belowWarningStaysNormal" classname="TestAlarmRule" time="0.002">
+    <failure type="fail" message="Compared values are not the same">
+      <![CDATA[   Actual   (lv(rule.evaluate(250.0))): 1
+   Expected (lv(AlarmLevel::Normal))  : 0]]>
+    </failure>
+  </testcase>
+  <testcase name="warningAtThreshold" classname="TestAlarmRule" time="0.000"/>
+  <testcase name="criticalAtThreshold" classname="TestAlarmRule" time="0.000"/>
+  <testcase name="staysWarningInsideHysteresis" classname="TestAlarmRule" time="0.000"/>
+  <testcase name="returnsNormalBelowHysteresis" classname="TestAlarmRule" time="0.000"/>
+  <testcase name="warningHysteresisBoundary" classname="TestAlarmRule" time="0.000"/>
+  <testcase name="jumpsStraightToCritical" classname="TestAlarmRule" time="0.000"/>
+  <testcase name="warningToCritical" classname="TestAlarmRule" time="0.000"/>
+  <testcase name="criticalToWarning" classname="TestAlarmRule" time="0.000"/>
+  <testcase name="criticalHysteresisBoundary" classname="TestAlarmRule" time="0.000"/>
+  <testcase name="criticalToNormalDirect" classname="TestAlarmRule" time="0.000"/>
+  <testcase name="fullSequence" classname="TestAlarmRule" time="0.000"/>
+  <testcase name="cleanupTestCase" classname="TestAlarmRule" time="0.000"/>
+</testsuite>

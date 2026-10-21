@@ -8,32 +8,31 @@
 DataLogger::DataLogger(QObject *parent)
     : QObject(parent)
 {
-    // 1. dossier de la base (créé s'il n'existe pas)
+
     const QString path = databasePath();
     qDebug() << "Base de données :" << path;
 
-    // 2. worker SANS parent (un parent empêcherait moveToThread)
+    // Worker
     m_worker = new DbWorker(path);
 
-    // 3. déménagement vers le thread de travail
+
     m_worker->moveToThread(&m_thread);
 
-    // 4. connexions (avant le démarrage du thread)
-    //    a) le thread démarre -> le worker ouvre la base, dans son thread
+    //  Thread connexions
+    //     Thread started
     connect(&m_thread, &QThread::started, m_worker, &DbWorker::open);
-    //    b) le thread se termine -> le worker se supprime, dans son thread
+    //    Thread Finished
     connect(&m_thread, &QThread::finished, m_worker, &QObject::deleteLater);
-    //    c) un échantillon est prêt -> le worker l'insère
+    //    Insert worker
     connect(this, &DataLogger::sampleReady, m_worker, &DbWorker::insertSample);
 
-    // 5. démarrage en dernier
     m_thread.start();
 }
 
 DataLogger::~DataLogger()
 {
-    m_thread.quit();   // demande l'arrêt de la boucle d'événements
-    m_thread.wait();   // attend que le thread soit réellement terminé
+    m_thread.quit();
+    m_thread.wait();
 }
 
 SensorSimulator *DataLogger::simulator() const
@@ -69,7 +68,7 @@ void DataLogger::onMeasurements()
 
     ++m_counter;
     if (m_counter % 10 != 0) {
-        return;   // une mesure sur dix : une par seconde
+        return;   // 1/10 mesure per 1sec
     }
 
     emit sampleReady(QDateTime::currentMSecsSinceEpoch(),

@@ -18,7 +18,6 @@ HistoryReader::HistoryReader(QObject *parent)
 {
 }
 
-// Liste blanche : seuls ces noms peuvent entrer dans une requête SQL
 QString HistoryReader::columnFor(const QString &quantity)
 {
     if (quantity == "Tension") {
@@ -33,7 +32,7 @@ QString HistoryReader::columnFor(const QString &quantity)
     if (quantity == "Température") {
         return "temperature";
     }
-    return QString();   // grandeur inconnue
+    return QString();
 }
 
 QVariantList HistoryReader::query(const QString &quantity, qint64 fromMs,
@@ -50,7 +49,7 @@ QVariantList HistoryReader::query(const QString &quantity, qint64 fromMs,
 
     QVariantList points;
 
-    {   // db et les requêtes vivent seulement dans ce bloc
+    {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_connectionName);
         db.setDatabaseName(databasePath());
 
@@ -109,40 +108,42 @@ QVariantList HistoryReader::query(const QString &quantity, qint64 fromMs,
 
 QString HistoryReader::exportCsv(const QString &quantity, qint64 fromMs, qint64 toMs)
 {
-    // 1. grandeur valide ?
+
     const QString column = columnFor(quantity);
     if (column.isEmpty()) {
         return QString();
     }
 
-    // 2. dossier Documents/SupervisionDashboard
+
     const QString dir =
         QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
         + "/SupervisionDashboard";
     QDir().mkpath(dir);
 
-    // 3. nom du fichier : colonne (sans accent) + date
+
     const QString fileName =
         QString("historique_%1_%2.csv")
             .arg(column, QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss"));
     const QString path = dir + "/" + fileName;
+    qDebug() << "Export CSV - dossier :" << dir;
+    qDebug() << "Export CSV - chemin complet :" << QDir::toNativeSeparators(path);
 
-    // 4. ouverture du fichier
+
     QFile file(path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qWarning() << "Impossible de créer le fichier :" << path << file.errorString();
         return QString();
     }
 
-    // 5. en-tête (le BOM permet à Excel de lire correctement les accents)
+
     QTextStream out(&file);
     out.setGenerateByteOrderMark(true);
     out << "timestamp_ms,datetime," << quantity << "\n";
 
-    // 6. lecture de la base et écriture ligne par ligne
+
     int rows = 0;
 
-    {   // db et la requête vivent seulement dans ce bloc
+    {
         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "export_conn");
         db.setDatabaseName(databasePath());
 
@@ -173,11 +174,11 @@ QString HistoryReader::exportCsv(const QString &quantity, qint64 fromMs, qint64 
 
     QSqlDatabase::removeDatabase("export_conn");
 
-    // 7. fermeture : flush AVANT close, pour que tout soit écrit
+
     out.flush();
     file.close();
 
-    // 8. aucune ligne : on ne laisse pas un fichier vide
+
     if (rows == 0) {
         file.remove();
         return QString();

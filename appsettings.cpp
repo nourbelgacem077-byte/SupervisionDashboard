@@ -26,7 +26,7 @@ AppSettings::AppSettings(QObject *parent)
         limits.hysteresis = m_store.value(QString("alarms/%1/hysteresis").arg(id),
                                           defaults.hysteresis).toDouble();
 
-        // fichier modifié à la main et devenu incohérent : on revient aux défauts
+
         if (limits.warning >= limits.critical || limits.hysteresis < 0.0) {
             limits = defaults;
         }
@@ -58,7 +58,7 @@ double AppSettings::hysteresis(const QString &quantity) const
 bool AppSettings::setThresholds(const QString &quantity, double warningLevel,
                                 double criticalLevel, double hyst)
 {
-    // 1. toutes les vérifications d'abord
+
     if (!m_limits.contains(quantity)) {
         return false;
     }
@@ -66,7 +66,7 @@ bool AppSettings::setThresholds(const QString &quantity, double warningLevel,
         return false;
     }
 
-    // 2. ensuite seulement, les modifications
+
     Limits limits;
     limits.warning = warningLevel;
     limits.critical = criticalLevel;
@@ -85,7 +85,7 @@ void AppSettings::resetDefaults()
         m_limits.insert(quantity, defaultsFor(quantity));
         save(quantity);
     }
-    emit thresholdsChanged();   // un seul signal, à la fin
+    emit thresholdsChanged();
 }
 
 QString AppSettings::keyId(const QString &quantity)
@@ -138,5 +138,5 @@ void AppSettings::save(const QString &quantity)
     m_store.setValue(QString("alarms/%1/warning").arg(id), limits.warning);
     m_store.setValue(QString("alarms/%1/critical").arg(id), limits.critical);
     m_store.setValue(QString("alarms/%1/hysteresis").arg(id), limits.hysteresis);
-    m_store.sync();   // force l'écriture sur le disque
+    m_store.sync();
 }

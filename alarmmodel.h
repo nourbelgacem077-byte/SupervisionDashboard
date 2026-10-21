@@ -56,7 +56,7 @@ private slots:
 
 private:
     AlarmManager m_manager;
-    QList<AlarmEvent> m_events;   // copie pour l'affichage : ligne 0 = le plus récent
+    QList<AlarmEvent> m_events;
     SensorSimulator *m_simulator = nullptr;
     AppSettings *m_settings = nullptr;
 };

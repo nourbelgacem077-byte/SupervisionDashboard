@@ -11,8 +11,8 @@
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);                   // 1. d'abord l'application
-    app.setApplicationName("SupervisionDashboard");    // 2. puis son nom
+    QGuiApplication app(argc, argv);
+    app.setApplicationName("SupervisionDashboard");
 
     QQmlApplicationEngine engine;
     QObject::connect(

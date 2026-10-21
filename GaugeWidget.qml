@@ -13,15 +13,15 @@ Rectangle {
     property real warning: 75
     property real critical: 90
 
-    // proportion remplie, bornée entre 0 et 1
+
     readonly property real fraction:
         Math.max(0, Math.min(1, (value - minValue) / (maxValue - minValue)))
 
-    // couleur selon l'état
+
     readonly property color stateColor:
         value >= critical ? Theme.critical : (value >= warning ? Theme.warning : Theme.ok)
 
-    // fraction animée pour un mouvement fluide
+
     property real animatedFraction: fraction
     Behavior on animatedFraction { NumberAnimation { duration: 250 } }
 
@@ -76,7 +76,7 @@ Rectangle {
                         }
                     }
 
-                    // arc de valeur
+
                     ShapePath {
                         strokeColor: gauge.stateColor
                         strokeWidth: gauge.thickness

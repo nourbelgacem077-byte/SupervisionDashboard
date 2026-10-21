@@ -4,12 +4,10 @@ import QtQuick.Layouts
 Item {
     id: root
 
-    required property var settings        // l'objet AppSettings
-
+    required property var settings
     property string message: ""
     property bool messageIsError: false
 
-    // T2 : recharge les valeurs enregistrées dans toutes les rangées
     function reload() {
         for (let i = 0; i < rows.count; ++i) {
             const item = rows.itemAt(i)
@@ -19,14 +17,14 @@ Item {
         }
     }
 
-    // T3 : applique toutes les rangées, sans s'arrêter à la première erreur
+
     function applyAll() {
         let allOk = true
 
         for (let i = 0; i < rows.count; ++i) {
             const item = rows.itemAt(i)
             if (item) {
-                const ok = item.apply()     // appelé pour CHAQUE rangée
+                const ok = item.apply()
                 if (!ok) {
                     allOk = false
                 }
@@ -35,19 +33,19 @@ Item {
 
         root.messageIsError = !allOk
         root.message = allOk
-            ? "Réglages enregistrés"
-            : "Certaines valeurs sont invalides (en rouge) : les autres ont été enregistrées"
+            ? "Settings saved successfully"
+            : "Some values are invalid (highlighted in red); the others have been saved"
     }
 
-    // T4 : valeurs par défaut
+
     function resetAll() {
         root.settings.resetDefaults()
         reload()
         root.messageIsError = false
-        root.message = "Valeurs par défaut restaurées"
+        root.message = "Default values restored"
     }
 
-    // la page se recharge chaque fois qu'on revient dessus
+
     onVisibleChanged: {
         if (visible) {
             root.message = ""
@@ -61,19 +59,19 @@ Item {
         spacing: 16
 
         Text {
-            text: "Paramètres"
+            text: "Settings"
             color: Theme.textPrimary
             font.pixelSize: 24
             font.bold: true
         }
 
         Text {
-            text: "Seuils d'alarme"
+            text: "Alarm Thresholds"
             color: Theme.textSecondary
             font.pixelSize: 16
         }
 
-        // T1 : une rangée par grandeur
+
         Repeater {
             id: rows
             model: root.settings.quantities()
@@ -87,7 +85,6 @@ Item {
             }
         }
 
-        // T5 : boutons
         RowLayout {
             Layout.fillWidth: true
             spacing: 12
@@ -100,7 +97,7 @@ Item {
 
                 Text {
                     anchors.centerIn: parent
-                    text: "Appliquer"
+                    text: "Apply"
                     color: Theme.window
                 }
                 MouseArea {
@@ -119,7 +116,7 @@ Item {
 
                 Text {
                     anchors.centerIn: parent
-                    text: "Valeurs par défaut"
+                    text: "Default Values"
                     color: Theme.accent
                 }
                 MouseArea {
@@ -130,7 +127,7 @@ Item {
             }
         }
 
-        // T6 : message de retour (invisible, donc sans place, quand il est vide)
+
         Text {
             Layout.fillWidth: true
             visible: root.message !== ""
@@ -140,6 +137,6 @@ Item {
             wrapMode: Text.WordWrap
         }
 
-        Item { Layout.fillHeight: true }   // espace extensible : colle tout en haut
+        Item { Layout.fillHeight: true }
     }
 }

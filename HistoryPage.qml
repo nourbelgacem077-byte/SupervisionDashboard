@@ -5,9 +5,9 @@ import QtGraphs
 Item {
     id: root
 
-    // noms IDENTIQUES à la liste blanche du C++ (accent compris)
+
     readonly property var quantities: ["Tension", "Courant", "Puissance", "Température"]
-    readonly property var rangeLabels: ["1 min", "10 min", "1 h", "Tout"]
+    readonly property var rangeLabels: ["1 min", "10 min", "1 h", "All"]
     readonly property var rangeMs: [60000, 600000, 3600000, 0]   // 0 = tout l'historique
 
     property int pointCount: 0
@@ -15,13 +15,13 @@ Item {
 
     HistoryReader { id: reader }
 
-    // début de la plage choisie (0 = depuis le début de l'historique)
+
     function rangeStart(now) {
         const duration = root.rangeMs[rangeBar.currentIndex]
         return duration === 0 ? 0 : now - duration
     }
 
-    // règle un axe sans jamais laisser min dépasser max
+
     function setRange(axis, lo, hi) {
         if (lo > axis.max) {
             axis.max = hi
@@ -69,8 +69,8 @@ Item {
         const now = Date.now()
         const path = reader.exportCsv(root.quantities[quantityBar.currentIndex],
                                       rangeStart(now), now)
-        root.statusText = path !== "" ? "Exporté : " + path
-                                      : "Export impossible : aucune donnée"
+        root.statusText = path !== "" ? "Export : " + path
+                                      : "Export failed: no data available"
     }
 
     onVisibleChanged: {
@@ -90,7 +90,7 @@ Item {
             spacing: 16
 
             Text {
-                text: "Historique"
+                text: "History"
                 color: Theme.textPrimary
                 font.pixelSize: 24
                 font.bold: true
@@ -111,7 +111,7 @@ Item {
 
                 Text {
                     anchors.centerIn: parent
-                    text: "Actualiser"
+                    text: "Refresh"
                     color: Theme.window
                 }
                 MouseArea {
@@ -130,7 +130,7 @@ Item {
 
                 Text {
                     anchors.centerIn: parent
-                    text: "Exporter CSV"
+                    text: "Export CSV"
                     color: Theme.accent
                 }
                 MouseArea {
@@ -195,7 +195,7 @@ Item {
             Text {
                 anchors.centerIn: parent
                 visible: root.pointCount === 0
-                text: "Aucune donnée pour cette période"
+                text: "No data available for this time range"
                 color: Theme.textSecondary
                 font.pixelSize: 20
             }

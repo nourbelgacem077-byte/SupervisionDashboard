@@ -3,9 +3,8 @@
 AlarmModel::AlarmModel(QObject *parent)
     : QAbstractListModel(parent)
 {
-    // plus aucun seuil écrit ici : ils viennent de AppSettings (setSettings)
 
-    // nouvel événement : on l'insère en ligne 0 (le plus récent en haut)
+
     connect(&m_manager, &AlarmManager::alarmRaised, this,
             [this](const AlarmEvent &event) {
                 beginInsertRows(QModelIndex(), 0, 0);
@@ -13,7 +12,7 @@ AlarmModel::AlarmModel(QObject *parent)
                 endInsertRows();
             });
 
-    // le manager signale un changement : le compteur d'alarmes actives aussi
+
     connect(&m_manager, &AlarmManager::eventsChanged,
             this, &AlarmModel::activeCountChanged);
 }
@@ -21,7 +20,7 @@ AlarmModel::AlarmModel(QObject *parent)
 int AlarmModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()) {
-        return 0;   // liste plate : aucun élément n'a d'enfants
+        return 0;
     }
     return static_cast<int>(m_events.size());
 }
@@ -105,7 +104,7 @@ void AlarmModel::setSettings(AppSettings *settings)
     if (m_settings) {
         connect(m_settings, &AppSettings::thresholdsChanged,
                 this, &AlarmModel::rebuildRules);
-        rebuildRules();   // les règles existent dès le branchement
+        rebuildRules();
     }
 
     emit settingsChanged();
@@ -117,7 +116,7 @@ void AlarmModel::rebuildRules()
         return;
     }
 
-    // addRule remplace la règle existante de même nom
+
     const QStringList names = m_settings->quantities();
     for (const QString &name : names) {
         m_manager.addRule(name,
@@ -138,10 +137,10 @@ void AlarmModel::onMeasurements()
         return;
     }
 
-    m_manager.processMeasurement("Tension", m_simulator->voltage());
-    m_manager.processMeasurement("Courant", m_simulator->current());
-    m_manager.processMeasurement("Puissance", m_simulator->power());
-    m_manager.processMeasurement("Température", m_simulator->temperature());
+    m_manager.processMeasurement("Voltage", m_simulator->voltage());
+    m_manager.processMeasurement("Current", m_simulator->current());
+    m_manager.processMeasurement("Power", m_simulator->power());
+    m_manager.processMeasurement("Temperature", m_simulator->temperature());
 }
 
 void AlarmModel::acknowledge(int row)
@@ -150,7 +149,7 @@ void AlarmModel::acknowledge(int row)
         return;
     }
 
-    // ligne 0 du modèle = dernier élément du manager
+
     const int managerIndex = static_cast<int>(m_events.size()) - 1 - row;
     m_manager.acknowledge(managerIndex);
 
