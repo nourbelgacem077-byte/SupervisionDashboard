@@ -46,6 +46,7 @@ qt_add_qml_module(appSupervisionDashboard
         QML_FILES SettingsPage.qml
         QML_FILES NumberField.qml
 
+
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -91,4 +92,11 @@ qt_add_executable(tst_alarmmanager
 set_target_properties(tst_alarmmanager PROPERTIES AUTOMOC ON)
 target_include_directories(tst_alarmmanager PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(tst_alarmmanager PRIVATE Qt6::Core Qt6::Test)
-add_test(NAME tst_alarmmanager COMMAND tst_alarmmanager)
+qt_add_executable(tst_appsettings
+    tests/tst_appsettings.cpp
+    appsettings.cpp
+    appsettings.h
+)
+target_include_directories(tst_appsettings PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(tst_appsettings PRIVATE Qt6::Core Qt6::Test)
+add_test(NAME tst_appsettings COMMAND tst_appsettings)
