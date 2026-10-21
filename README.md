@@ -1,3 +1,4 @@
+![CI](https://github.com/nourbelgacem077-byte/SupervisionDashboard/actions/workflows/build.yml/badge.svg)
 # SupervisionDashboard
 
 Industrial supervision dashboard built with Qt 6, QML and C++ (simulated data)
