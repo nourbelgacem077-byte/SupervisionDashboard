@@ -137,10 +137,10 @@ void AlarmModel::onMeasurements()
         return;
     }
 
-    m_manager.processMeasurement("Voltage", m_simulator->voltage());
-    m_manager.processMeasurement("Current", m_simulator->current());
-    m_manager.processMeasurement("Power", m_simulator->power());
-    m_manager.processMeasurement("Temperature", m_simulator->temperature());
+    m_manager.processMeasurement("Tension", m_simulator->voltage());
+    m_manager.processMeasurement("Courant", m_simulator->current());
+    m_manager.processMeasurement("Puissance", m_simulator->power());
+    m_manager.processMeasurement("Température", m_simulator->temperature());
 }
 
 void AlarmModel::acknowledge(int row)
