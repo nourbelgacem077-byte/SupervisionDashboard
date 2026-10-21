@@ -45,6 +45,7 @@ qt_add_qml_module(appSupervisionDashboard
         QML_FILES ThresholdRow.qml
         QML_FILES SettingsPage.qml
         QML_FILES NumberField.qml
+
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -67,6 +68,7 @@ install(TARGETS appSupervisionDashboard
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 # ---------- Tests ----------
+# ---------- Tests ----------
 find_package(Qt6 REQUIRED COMPONENTS Test)
 enable_testing()
 
@@ -76,5 +78,17 @@ qt_add_executable(tst_alarmrule
     alarmrule.h
 )
 target_include_directories(tst_alarmrule PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(tst_alarmrule PRIVATE Qt6::Test)
+target_link_libraries(tst_alarmrule PRIVATE Qt6::Core Qt6::Test)
 add_test(NAME tst_alarmrule COMMAND tst_alarmrule)
+
+qt_add_executable(tst_alarmmanager
+    tests/tst_alarmmanager.cpp
+    alarmmanager.cpp
+    alarmmanager.h
+    alarmrule.cpp
+    alarmrule.h
+)
+set_target_properties(tst_alarmmanager PROPERTIES AUTOMOC ON)
+target_include_directories(tst_alarmmanager PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(tst_alarmmanager PRIVATE Qt6::Core Qt6::Test)
+add_test(NAME tst_alarmmanager COMMAND tst_alarmmanager)
