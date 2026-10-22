@@ -7,6 +7,8 @@ find_package(Qt6 REQUIRED COMPONENTS Quick Sql)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick)
 
+find_package(Qt6 REQUIRED COMPONENTS Core Mqtt)
+
 qt_standard_project_setup(REQUIRES 6.10)
 
 # Content of downloaded design from Figma to Qt or similar
@@ -47,6 +49,7 @@ qt_add_qml_module(appSupervisionDashboard
         QML_FILES NumberField.qml
         SOURCES
         SOURCES datasource.h
+        SOURCES mqttdatasource.h mqttdatasource.cpp
 
 
 )
@@ -63,8 +66,9 @@ set_target_properties(appSupervisionDashboard PROPERTIES
 )
 
 target_link_libraries(appSupervisionDashboard
-    PRIVATE Qt6::Quick Qt6::Sql
+    PRIVATE Qt6::Quick Qt6::Sql Qt6::Mqtt
 )
+
 install(TARGETS appSupervisionDashboard
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

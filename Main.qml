@@ -10,8 +10,11 @@ Window {
     color: Theme.window
     title: qsTr("Supervision Dashboard")
 
-    SensorSimulator {
+    MqttDataSource {
         id: sim
+        host: "localhost"
+        port: 1883
+        Component.onCompleted: start()
     }
     AlarmModel {
           id: alarms
