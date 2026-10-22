@@ -45,6 +45,8 @@ qt_add_qml_module(appSupervisionDashboard
         QML_FILES ThresholdRow.qml
         QML_FILES SettingsPage.qml
         QML_FILES NumberField.qml
+        SOURCES
+        SOURCES datasource.h
 
 
 )

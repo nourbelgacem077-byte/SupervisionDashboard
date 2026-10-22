@@ -12,7 +12,7 @@ double randomRange(double min, double max)
 }
 
 SensorSimulator::SensorSimulator(QObject *parent)
-    : QObject(parent)
+    : DataSource(parent)
 {
     m_timer.setInterval(100);
     connect(&m_timer, &QTimer::timeout, this, &SensorSimulator::tick);

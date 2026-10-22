@@ -35,12 +35,12 @@ DataLogger::~DataLogger()
     m_thread.wait();
 }
 
-SensorSimulator *DataLogger::simulator() const
+DataSource*DataLogger::simulator() const
 {
     return m_simulator;
 }
 
-void DataLogger::setSimulator(SensorSimulator *simulator)
+void DataLogger::setSimulator(DataSource*simulator)
 {
     if (m_simulator == simulator) {
         return;
@@ -53,7 +53,7 @@ void DataLogger::setSimulator(SensorSimulator *simulator)
     m_simulator = simulator;
 
     if (m_simulator) {
-        connect(m_simulator, &SensorSimulator::measurementsChanged,
+        connect(m_simulator, &DataSource::measurementsChanged,
                 this, &DataLogger::onMeasurements);
     }
 

@@ -8,13 +8,13 @@
 
 #include "alarmmanager.h"
 #include "appsettings.h"
-#include "sensorsimulator.h"
+#include "datasource.h"
 
 class AlarmModel : public QAbstractListModel
 {
     Q_OBJECT
     QML_ELEMENT
-    Q_PROPERTY(SensorSimulator *simulator READ simulator WRITE setSimulator
+    Q_PROPERTY(DataSource*simulator READ simulator WRITE setSimulator
                    NOTIFY simulatorChanged)
     Q_PROPERTY(AppSettings *settings READ settings WRITE setSettings
                    NOTIFY settingsChanged)
@@ -35,8 +35,8 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    SensorSimulator *simulator() const;
-    void setSimulator(SensorSimulator *simulator);
+    DataSource*simulator() const;
+    void setSimulator(DataSource*simulator);
 
     AppSettings *settings() const;
     void setSettings(AppSettings *settings);
@@ -57,7 +57,7 @@ private slots:
 private:
     AlarmManager m_manager;
     QList<AlarmEvent> m_events;
-    SensorSimulator *m_simulator = nullptr;
+    DataSource*m_simulator = nullptr;
     AppSettings *m_settings = nullptr;
 };
 #endif // ALARMMODEL_H

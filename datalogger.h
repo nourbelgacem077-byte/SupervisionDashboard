@@ -8,21 +8,21 @@
 #include <QtQml/qqmlregistration.h>
 
 #include "dbworker.h"
-#include "sensorsimulator.h"
+#include "datasource.h"
 
 class DataLogger : public QObject
 {
     Q_OBJECT
     QML_ELEMENT
-    Q_PROPERTY(SensorSimulator *simulator READ simulator WRITE setSimulator
+    Q_PROPERTY(DataSource*simulator READ simulator WRITE setSimulator
                    NOTIFY simulatorChanged)
 
 public:
     explicit DataLogger(QObject *parent = nullptr);
     ~DataLogger() override;
 
-    SensorSimulator *simulator() const;
-    void setSimulator(SensorSimulator *simulator);
+    DataSource*simulator() const;
+    void setSimulator(DataSource*simulator);
 
 signals:
     void simulatorChanged();
@@ -35,7 +35,7 @@ private slots:
 private:
     QThread m_thread;
     DbWorker *m_worker = nullptr;
-    SensorSimulator *m_simulator = nullptr;
+    DataSource*m_simulator = nullptr;
     int m_counter = 0;
 };
 

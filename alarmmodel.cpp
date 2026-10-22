@@ -59,12 +59,12 @@ QHash<int, QByteArray> AlarmModel::roleNames() const
     };
 }
 
-SensorSimulator *AlarmModel::simulator() const
+DataSource*AlarmModel::simulator() const
 {
     return m_simulator;
 }
 
-void AlarmModel::setSimulator(SensorSimulator *simulator)
+void AlarmModel::setSimulator(DataSource*simulator)
 {
     if (m_simulator == simulator) {
         return;
@@ -77,7 +77,7 @@ void AlarmModel::setSimulator(SensorSimulator *simulator)
     m_simulator = simulator;
 
     if (m_simulator) {
-        connect(m_simulator, &SensorSimulator::measurementsChanged,
+        connect(m_simulator, &DataSource::measurementsChanged,
                 this, &AlarmModel::onMeasurements);
     }
 
