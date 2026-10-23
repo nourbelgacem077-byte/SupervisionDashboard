@@ -159,6 +159,7 @@ bool AppSettings::isValidSource(const QString &type, const QString &host, int po
 }
 bool AppSettings::setSource(const QString &type, const QString &host, int port)
 {
+    qDebug() << "setSource" << type << host << port << "valid:" << isValidSource(type, host, port);
     if (!isValidSource(type, host, port)) {
         return false;
     }

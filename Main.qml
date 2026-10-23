@@ -32,7 +32,10 @@ Window {
 
     Connections {
         target: appSettings
-        function onSourceChanged() { root.applySource() }
+        function onSourceChanged() {
+            console.log("sourceChanged ->", appSettings.sourceType)
+            root.applySource()
+        }
     }
 
     Component.onCompleted: applySource()
