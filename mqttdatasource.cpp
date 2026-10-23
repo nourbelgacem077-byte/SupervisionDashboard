@@ -60,11 +60,15 @@ void MqttDataSource::setPort(int port)
 void MqttDataSource::start()
 {
     qDebug() << "MQTT start" << m_host << m_port;
+
+    if (m_client.state() != QMqttClient::Disconnected) {
+        m_client.disconnectFromHost();
+    }
+
     m_client.setHostname(m_host);
     m_client.setPort(static_cast<quint16>(m_port));
     m_client.connectToHost();
 }
-
 void MqttDataSource::stop()
 {
     m_client.disconnectFromHost();

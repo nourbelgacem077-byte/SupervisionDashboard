@@ -35,34 +35,34 @@ DataLogger::~DataLogger()
     m_thread.wait();
 }
 
-DataSource*DataLogger::simulator() const
+DataSource*DataLogger::source() const
 {
-    return m_simulator;
+    return m_source;
 }
 
-void DataLogger::setSimulator(DataSource*simulator)
+void DataLogger::setsource(DataSource*source)
 {
-    if (m_simulator == simulator) {
+    if (m_source == source) {
         return;
     }
 
-    if (m_simulator) {
-        disconnect(m_simulator, nullptr, this, nullptr);
+    if (m_source) {
+        disconnect(m_source, nullptr, this, nullptr);
     }
 
-    m_simulator = simulator;
+    m_source = source;
 
-    if (m_simulator) {
-        connect(m_simulator, &DataSource::measurementsChanged,
+    if (m_source) {
+        connect(m_source, &DataSource::measurementsChanged,
                 this, &DataLogger::onMeasurements);
     }
 
-    emit simulatorChanged();
+    emit sourceChanged();
 }
 
 void DataLogger::onMeasurements()
 {
-    if (!m_simulator) {
+    if (!m_source) {
         return;
     }
 
@@ -72,8 +72,8 @@ void DataLogger::onMeasurements()
     }
 
     emit sampleReady(QDateTime::currentMSecsSinceEpoch(),
-                     m_simulator->voltage(),
-                     m_simulator->current(),
-                     m_simulator->power(),
-                     m_simulator->temperature());
+                     m_source->voltage(),
+                     m_source->current(),
+                     m_source->power(),
+                     m_source->temperature());
 }

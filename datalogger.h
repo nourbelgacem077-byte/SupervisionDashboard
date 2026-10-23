@@ -14,18 +14,18 @@ class DataLogger : public QObject
 {
     Q_OBJECT
     QML_ELEMENT
-    Q_PROPERTY(DataSource*simulator READ simulator WRITE setSimulator
-                   NOTIFY simulatorChanged)
+    Q_PROPERTY(DataSource*source READ source WRITE setsource
+                   NOTIFY sourceChanged)
 
 public:
     explicit DataLogger(QObject *parent = nullptr);
     ~DataLogger() override;
 
-    DataSource*simulator() const;
-    void setSimulator(DataSource*simulator);
+    DataSource*source() const;
+    void setsource(DataSource*source);
 
 signals:
-    void simulatorChanged();
+    void sourceChanged();
     void sampleReady(qint64 timestampMs, double voltage, double current,
                      double power, double temperature);
 
@@ -35,7 +35,7 @@ private slots:
 private:
     QThread m_thread;
     DbWorker *m_worker = nullptr;
-    DataSource*m_simulator = nullptr;
+    DataSource*m_source = nullptr;
     int m_counter = 0;
 };
 

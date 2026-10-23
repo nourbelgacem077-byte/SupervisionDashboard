@@ -14,8 +14,8 @@ class AlarmModel : public QAbstractListModel
 {
     Q_OBJECT
     QML_ELEMENT
-    Q_PROPERTY(DataSource*simulator READ simulator WRITE setSimulator
-                   NOTIFY simulatorChanged)
+    Q_PROPERTY(DataSource*source READ source WRITE setsource
+                   NOTIFY sourceChanged)
     Q_PROPERTY(AppSettings *settings READ settings WRITE setSettings
                    NOTIFY settingsChanged)
     Q_PROPERTY(int activeCount READ activeCount NOTIFY activeCountChanged)
@@ -35,8 +35,8 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    DataSource*simulator() const;
-    void setSimulator(DataSource*simulator);
+    DataSource*source() const;
+    void setsource(DataSource*source);
 
     AppSettings *settings() const;
     void setSettings(AppSettings *settings);
@@ -46,7 +46,7 @@ public:
     Q_INVOKABLE void acknowledge(int row);
 
 signals:
-    void simulatorChanged();
+    void sourceChanged();
     void settingsChanged();
     void activeCountChanged();
 
@@ -57,7 +57,7 @@ private slots:
 private:
     AlarmManager m_manager;
     QList<AlarmEvent> m_events;
-    DataSource*m_simulator = nullptr;
+    DataSource*m_source = nullptr;
     AppSettings *m_settings = nullptr;
 };
 #endif // ALARMMODEL_H

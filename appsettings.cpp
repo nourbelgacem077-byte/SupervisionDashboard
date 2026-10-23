@@ -33,6 +33,16 @@ AppSettings::AppSettings(QObject *parent)
 
         m_limits.insert(quantity, limits);
     }
+    const QString type = m_store.value("source/type", m_sourceType).toString();
+    const QString host = m_store.value("source/host", m_mqttHost).toString().trimmed();
+    const int port = m_store.value("source/port", m_mqttPort).toInt();
+
+    if (isValidSource(type, host, port)) {
+        m_sourceType = type;
+        m_mqttHost = host;
+        m_mqttPort = port;
+    }
+
 }
 
 QStringList AppSettings::quantities() const
@@ -139,4 +149,36 @@ void AppSettings::save(const QString &quantity)
     m_store.setValue(QString("alarms/%1/critical").arg(id), limits.critical);
     m_store.setValue(QString("alarms/%1/hysteresis").arg(id), limits.hysteresis);
     m_store.sync();
+}
+/* For MQtt changes*/
+bool AppSettings::isValidSource(const QString &type, const QString &host, int port)
+{
+    return (type == "simulator" || type == "mqtt")
+    && !host.trimmed().isEmpty()
+        && port >= 1 && port <= 65535;
+}
+bool AppSettings::setSource(const QString &type, const QString &host, int port)
+{
+    if (!isValidSource(type, host, port)) {
+        return false;
+    }
+
+    const QString cleanHost = host.trimmed();
+
+    // Rien n'a changé : config valide, rien à faire, pas de signal
+    if (type == m_sourceType && cleanHost == m_mqttHost && port == m_mqttPort) {
+        return true;
+    }
+
+    m_sourceType = type;
+    m_mqttHost = cleanHost;
+    m_mqttPort = port;
+
+    m_store.setValue("source/type", m_sourceType);
+    m_store.setValue("source/host", m_mqttHost);
+    m_store.setValue("source/port", m_mqttPort);
+    m_store.sync();
+
+    emit sourceChanged();
+    return true;
 }

@@ -59,29 +59,29 @@ QHash<int, QByteArray> AlarmModel::roleNames() const
     };
 }
 
-DataSource*AlarmModel::simulator() const
+DataSource*AlarmModel::source() const
 {
-    return m_simulator;
+    return m_source;
 }
 
-void AlarmModel::setSimulator(DataSource*simulator)
+void AlarmModel::setsource(DataSource*source)
 {
-    if (m_simulator == simulator) {
+    if (m_source == source) {
         return;
     }
 
-    if (m_simulator) {
-        disconnect(m_simulator, nullptr, this, nullptr);
+    if (m_source) {
+        disconnect(m_source, nullptr, this, nullptr);
     }
 
-    m_simulator = simulator;
+    m_source = source;
 
-    if (m_simulator) {
-        connect(m_simulator, &DataSource::measurementsChanged,
+    if (m_source) {
+        connect(m_source, &DataSource::measurementsChanged,
                 this, &AlarmModel::onMeasurements);
     }
 
-    emit simulatorChanged();
+    emit sourceChanged();
 }
 
 AppSettings *AlarmModel::settings() const
@@ -133,14 +133,14 @@ int AlarmModel::activeCount() const
 
 void AlarmModel::onMeasurements()
 {
-    if (!m_simulator) {
+    if (!m_source) {
         return;
     }
 
-    m_manager.processMeasurement("Tension", m_simulator->voltage());
-    m_manager.processMeasurement("Courant", m_simulator->current());
-    m_manager.processMeasurement("Puissance", m_simulator->power());
-    m_manager.processMeasurement("Température", m_simulator->temperature());
+    m_manager.processMeasurement("Tension", m_source->voltage());
+    m_manager.processMeasurement("Courant", m_source->current());
+    m_manager.processMeasurement("Puissance", m_source->power());
+    m_manager.processMeasurement("Température", m_source->temperature());
 }
 
 void AlarmModel::acknowledge(int row)

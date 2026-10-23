@@ -1,5 +1,4 @@
 #include "alarmrule.h"
-
 AlarmRule::AlarmRule(double warning, double critical, double hysteresis)
     : m_warning(warning)
     , m_critical(critical)
