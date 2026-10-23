@@ -7,11 +7,14 @@
 #include <QJsonObject>
 #include <QJsonParseError>
 #include <QMqttTopicFilter>
+#include <QMqttTopicName>
 
 namespace {
-const char *kTopicFilter = "supervision/device1/#";
+//const char *kTopicFilter = "supervision/device1/#";
+const QString kBaseTopic = QStringLiteral("supervision/device1");
+const QString kTopicFilter = kBaseTopic + QStringLiteral("/#");
+const QString kCmdTopic = kBaseTopic + QStringLiteral("/cmd");
 }
-
 MqttDataSource::MqttDataSource(QObject *parent)
     : DataSource(parent)
 {
@@ -99,7 +102,7 @@ void MqttDataSource::onMessage(const QByteArray &message,
         m_temperature = m.temperature;
         emit measurementsChanged();
     } else if (name.endsWith("/status")) {
-        qDebug() << "MQTT status:" << message;   // traité à l'étape 5.5
+        qDebug() << "MQTT status:" << message;
     }
 }
 
@@ -127,4 +130,23 @@ bool MqttDataSource::parseMeasurement(const QByteArray &message, Measurement &ou
     out.power = o.value("power").toDouble();
     out.temperature = o.value("temperature").toDouble();
     return true;
+}
+
+void MqttDataSource::sendCommand(const QByteArray &command)
+{
+    if (m_client.state() != QMqttClient::Connected) {
+        qWarning() << "MQTT: commande ignorée, non connecté";
+        return;
+    }
+    m_client.publish(QMqttTopicName(kCmdTopic), command);
+}
+
+void MqttDataSource::injectOvervoltage()
+{
+    sendCommand("overvoltage");
+}
+
+void MqttDataSource::injectOverheat()
+{
+    sendCommand("overheat");
 }

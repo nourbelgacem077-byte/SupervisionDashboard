@@ -14,8 +14,8 @@ class SensorSimulator : public DataSource
     QML_ELEMENT
 public:
     explicit SensorSimulator(QObject *parent = nullptr);
-    Q_INVOKABLE void injectOvervoltage();
-    Q_INVOKABLE void injectOverheat();
+    void injectOvervoltage() override;
+    void injectOverheat() override;
 
 signals:
     void measurementsChanged();

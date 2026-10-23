@@ -40,6 +40,9 @@ public:
     // Statique : testable sans broker (étape 5.6)
     static bool parseMeasurement(const QByteArray &message, Measurement &out);
 
+    void injectOvervoltage() override;
+    void injectOverheat() override;
+
 signals:
     void hostChanged();
     void portChanged();
@@ -50,6 +53,7 @@ private slots:
     void onMessage(const QByteArray &message, const QMqttTopicName &topic);
 
 private:
+    void sendCommand(const QByteArray &command);
     QMqttClient m_client;
     QString m_host = "localhost";
     int m_port = 1883;

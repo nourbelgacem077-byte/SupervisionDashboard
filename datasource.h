@@ -18,11 +18,15 @@ class DataSource : public QObject
     Q_PROPERTY(bool connected READ connected NOTIFY connectedChanged)
 
 public:
+
+    Q_INVOKABLE virtual void injectOvervoltage() {}
+    Q_INVOKABLE virtual void injectOverheat() {}
     double voltage() const { return m_voltage; }
     double current() const { return m_current; }
     double power() const { return m_power; }
     double temperature() const { return m_temperature; }
     bool connected() const { return m_connected; }
+    ~DataSource() override = default;
 
 signals:
     void measurementsChanged();
