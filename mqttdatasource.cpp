@@ -14,19 +14,23 @@ namespace {
 const QString kBaseTopic = QStringLiteral("supervision/device1");
 const QString kTopicFilter = kBaseTopic + QStringLiteral("/#");
 const QString kCmdTopic = kBaseTopic + QStringLiteral("/cmd");
+const int kStaleMs = 3000;
 }
 MqttDataSource::MqttDataSource(QObject *parent)
     : DataSource(parent)
 {
-    // Tant qu'on n'est pas connecté au broker, la source est "non connectée"
-    setConnected(false);
-
     connect(&m_client, &QMqttClient::connected,
             this, &MqttDataSource::onConnected);
     connect(&m_client, &QMqttClient::stateChanged,
             this, &MqttDataSource::onStateChanged);
     connect(&m_client, &QMqttClient::messageReceived,
             this, &MqttDataSource::onMessage);
+
+    m_watchdog.setInterval(1000);
+    connect(&m_watchdog, &QTimer::timeout, this, &MqttDataSource::updateState);
+    m_watchdog.start();
+
+    updateState();
 }
 
 QString MqttDataSource::host() const
@@ -86,7 +90,12 @@ void MqttDataSource::onConnected()
 void MqttDataSource::onStateChanged()
 {
     qDebug() << "MQTT state" << m_client.state();
-    setConnected(m_client.state() == QMqttClient::Connected);
+
+    if (m_client.state() != QMqttClient::Connected) {
+        m_deviceOnline = false;
+        m_sinceLast.invalidate();
+    }
+    updateState();
 }
 
 void MqttDataSource::onMessage(const QByteArray &message,
@@ -104,12 +113,33 @@ void MqttDataSource::onMessage(const QByteArray &message,
         m_current = m.current;
         m_power = m.power;
         m_temperature = m.temperature;
+        m_sinceLast.restart();
         emit measurementsChanged();
-    } else if (name.endsWith("/status")) {
-        qDebug() << "MQTT status:" << message;
+        updateState();
+    }     else if (name.endsWith("/status")) {
+    bool online = false;
+    if (parseStatus(message, online)) {
+        m_deviceOnline = online;
+        updateState();
+    }
     }
 }
+bool MqttDataSource::parseStatus(const QByteArray &message, bool &online)
+{
+    const QByteArray text = message.trimmed();
 
+    if (text == "online") {
+        online = true;
+        return true;
+    }
+    if (text == "offline") {
+        online = false;
+        return true;
+    }
+
+    qWarning() << "MQTT: status inconnu :" << message;
+    return false;
+}
 bool MqttDataSource::parseMeasurement(const QByteArray &message, Measurement &out)
 {
     QJsonParseError err;
@@ -153,4 +183,25 @@ void MqttDataSource::injectOvervoltage()
 void MqttDataSource::injectOverheat()
 {
     sendCommand("overheat");
+}
+void MqttDataSource::updateState()
+{
+    bool live = false;
+    QString text;
+
+    if (m_client.state() == QMqttClient::Connecting) {
+        text = "Connecting...";
+    } else if (m_client.state() != QMqttClient::Connected) {
+        text = "Broker unreachable";
+    } else if (!m_deviceOnline) {
+        text = "Device offline";
+    } else if (!m_sinceLast.isValid() || m_sinceLast.elapsed() > kStaleMs) {
+        text = "No data";
+    } else {
+        live = true;
+        text = "Live";
+    }
+
+    setConnected(live);
+    setStatusText(text);
 }

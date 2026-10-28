@@ -16,6 +16,7 @@ class DataSource : public QObject
     Q_PROPERTY(double power READ power NOTIFY measurementsChanged)
     Q_PROPERTY(double temperature READ temperature NOTIFY measurementsChanged)
     Q_PROPERTY(bool connected READ connected NOTIFY connectedChanged)
+    Q_PROPERTY(QString statusText READ statusText NOTIFY statusTextChanged)
 
 public:
 
@@ -27,10 +28,12 @@ public:
     double temperature() const { return m_temperature; }
     bool connected() const { return m_connected; }
     ~DataSource() override = default;
+    QString statusText() const { return m_statusText; }
 
 signals:
     void measurementsChanged();
     void connectedChanged();
+    void statusTextChanged();
 
 protected:
     explicit DataSource(QObject *parent = nullptr) : QObject(parent) {}
@@ -42,7 +45,14 @@ protected:
         m_connected = value;
         emit connectedChanged();
     }
-
+    void setStatusText(const QString &text)
+    {
+        if (m_statusText == text)
+            return;
+        m_statusText = text;
+        emit statusTextChanged();
+    }
+    QString m_statusText = QStringLiteral("Live");
     double m_voltage = 230.0;     // V
     double m_current = 10.0;      // A
     double m_power = 2.3;         // kW

@@ -50,6 +50,7 @@ qt_add_qml_module(appSupervisionDashboard
         SOURCES
         SOURCES datasource.h
         SOURCES mqttdatasource.h mqttdatasource.cpp
+        QML_FILES ConnectionBadge.qml
 
 
 )

@@ -7,14 +7,15 @@ Item {
     required property var source
 
     ColumnLayout {
+
         anchors.fill: parent
         anchors.margins: 20
         spacing: 20
-
+ ConnectionBadge { source: root.source }
         RowLayout {
             Layout.fillWidth: true
             spacing: 20
-
+ opacity: root.source.connected ? 1.0 : 0.4
             StatCard { Layout.fillWidth: true; title: "Voltage"; value: root.source.voltage; unit: "V" }
             StatCard { Layout.fillWidth: true; title: "Current"; value: root.source.current; unit: "A" }
             StatCard { Layout.fillWidth: true; title: "Power"; value: root.source.power; unit: "kW"; decimals: 2 }
@@ -25,7 +26,7 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             spacing: 20
-
+ opacity: root.source.connected ? 1.0 : 0.4
             LiveChart {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
