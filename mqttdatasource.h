@@ -10,7 +10,7 @@
 #include <QElapsedTimer>
 #include <QTimer>
 #include "datasource.h"
-
+#include "measurementparser.h"
 class MqttDataSource : public DataSource
 {
     Q_OBJECT
@@ -30,17 +30,17 @@ public:
     Q_INVOKABLE void start();
     Q_INVOKABLE void stop();
 
-    struct Measurement
+  /*  struct Measurement
     {
         double voltage = 0.0;
         double current = 0.0;
         double power = 0.0;
         double temperature = 0.0;
-    };
+    };*/
 
     // Statique : testable sans broker (étape 5.6)
-    static bool parseMeasurement(const QByteArray &message, Measurement &out);
-    static bool parseStatus(const QByteArray &message, bool &online);
+   // static bool parseMeasurement(const QByteArray &message, Measurement &out);
+    //static bool parseStatus(const QByteArray &message, bool &online);
 
     void injectOvervoltage() override;
     void injectOverheat() override;

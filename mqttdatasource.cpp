@@ -1,11 +1,10 @@
-#include "mqttdatasource.h"
 
 #include "mqttdatasource.h"
-
+#include "measurementparser.h"
 #include <QDebug>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonParseError>
+//#include <QJsonDocument>
+//#include <QJsonObject>
+//#include <QJsonParseError>
 #include <QMqttTopicFilter>
 #include <QMqttTopicName>
 
@@ -124,7 +123,7 @@ void MqttDataSource::onMessage(const QByteArray &message,
     }
     }
 }
-bool MqttDataSource::parseStatus(const QByteArray &message, bool &online)
+/*bool MqttDataSource::parseStatus(const QByteArray &message, bool &online)
 {
     const QByteArray text = message.trimmed();
 
@@ -139,8 +138,8 @@ bool MqttDataSource::parseStatus(const QByteArray &message, bool &online)
 
     qWarning() << "MQTT: status inconnu :" << message;
     return false;
-}
-bool MqttDataSource::parseMeasurement(const QByteArray &message, Measurement &out)
+}*/
+/*bool MqttDataSource::parseMeasurement(const QByteArray &message, Measurement &out)
 {
     QJsonParseError err;
     const QJsonDocument doc = QJsonDocument::fromJson(message, &err);
@@ -165,7 +164,7 @@ bool MqttDataSource::parseMeasurement(const QByteArray &message, Measurement &ou
     out.temperature = o.value("temperature").toDouble();
     return true;
 }
-
+*/
 void MqttDataSource::sendCommand(const QByteArray &command)
 {
     if (m_client.state() != QMqttClient::Connected) {

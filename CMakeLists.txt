@@ -51,7 +51,7 @@ qt_add_qml_module(appSupervisionDashboard
         SOURCES datasource.h
         SOURCES mqttdatasource.h mqttdatasource.cpp
         QML_FILES ConnectionBadge.qml
-
+        SOURCES measurementparser.h measurementparser.cpp
 
 )
 
@@ -107,3 +107,12 @@ qt_add_executable(tst_appsettings
 target_include_directories(tst_appsettings PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(tst_appsettings PRIVATE Qt6::Core Qt6::Test)
 add_test(NAME tst_appsettings COMMAND tst_appsettings)
+
+qt_add_executable(tst_mqttparsing
+    tests/tst_mqttparsing.cpp
+    measurementparser.cpp
+    measurementparser.h
+)
+target_include_directories(tst_mqttparsing PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(tst_mqttparsing PRIVATE Qt6::Core Qt6::Test)
+add_test(NAME tst_mqttparsing COMMAND tst_mqttparsing)
