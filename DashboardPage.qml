@@ -4,33 +4,34 @@ import QtQuick.Layouts
 Item {
     id: root
 
-    required property var simulator
+    required property var source
 
     ColumnLayout {
+
         anchors.fill: parent
         anchors.margins: 20
         spacing: 20
-
+ ConnectionBadge { source: root.source }
         RowLayout {
             Layout.fillWidth: true
             spacing: 20
-
-            StatCard { Layout.fillWidth: true; title: "Voltage"; value: root.simulator.voltage; unit: "V" }
-            StatCard { Layout.fillWidth: true; title: "Current"; value: root.simulator.current; unit: "A" }
-            StatCard { Layout.fillWidth: true; title: "Power"; value: root.simulator.power; unit: "kW"; decimals: 2 }
-            StatCard { Layout.fillWidth: true; title: "Temperature"; value: root.simulator.temperature; unit: "°C" }
+ opacity: root.source.connected ? 1.0 : 0.4
+            StatCard { Layout.fillWidth: true; title: "Voltage"; value: root.source.voltage; unit: "V" }
+            StatCard { Layout.fillWidth: true; title: "Current"; value: root.source.current; unit: "A" }
+            StatCard { Layout.fillWidth: true; title: "Power"; value: root.source.power; unit: "kW"; decimals: 2 }
+            StatCard { Layout.fillWidth: true; title: "Temperature"; value: root.source.temperature; unit: "°C" }
         }
 
         RowLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
             spacing: 20
-
+ opacity: root.source.connected ? 1.0 : 0.4
             LiveChart {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 title: "Voltage (V)"
-                value: root.simulator.voltage
+                value: root.source.voltage
                 yMin: 220
                 yMax: 240
                 lineColor: Theme.accent
@@ -40,7 +41,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 title: "Current (A)"
-                value: root.simulator.current
+                value: root.source.current
                 yMin: 6
                 yMax: 14
                 lineColor: Theme.accent2
@@ -50,7 +51,7 @@ Item {
                 Layout.preferredWidth: 260
                 Layout.fillHeight: true
                 title: "Temperature"
-                value: root.simulator.temperature
+                value: root.source.temperature
                 minValue: 0
                 maxValue: 120
                 warning: 75

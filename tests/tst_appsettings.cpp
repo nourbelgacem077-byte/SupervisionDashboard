@@ -42,6 +42,12 @@ private slots:
     void persistsAcrossInstances();
     void resetDefaultsRestores();
     void corruptedFileFallsBack();
+    void portTooLowIsRejected();
+    void portTooHighIsRejected();
+    void emptyHostIsRejected();
+    void unknownTypeIsRejected();
+    void portLimitsAreAccepted();
+
 };
 
 // Runs once before all tests
@@ -233,6 +239,35 @@ void TestAppSettings::corruptedFileFallsBack()
     QCOMPARE(s.warning("Tension"), 250.0);
     QCOMPARE(s.critical("Tension"), 260.0);
 }
+void TestAppSettings::portTooLowIsRejected()
+{
+    AppSettings s;
+    QVERIFY(!s.setSource("simulator", "localhost", 0));
+}
 
+void TestAppSettings::portTooHighIsRejected()
+{
+    AppSettings s;
+    QVERIFY(!s.setSource("simulator", "localhost", 70000));
+}
+
+void TestAppSettings::emptyHostIsRejected()
+{
+    AppSettings s;
+    QVERIFY(!s.setSource("mqtt", "   ", 1883));
+}
+
+void TestAppSettings::unknownTypeIsRejected()
+{
+    AppSettings s;
+    QVERIFY(!s.setSource("foo", "localhost", 1883));
+}
+
+void TestAppSettings::portLimitsAreAccepted()
+{
+    AppSettings s;
+    QVERIFY(s.setSource("mqtt", "localhost", 1));
+    QVERIFY(s.setSource("mqtt", "localhost", 65535));
+}
 QTEST_GUILESS_MAIN(TestAppSettings)
 #include "tst_appsettings.moc"

@@ -7,6 +7,8 @@ Item {
     required property var settings
     property string message: ""
     property bool messageIsError: false
+    property string sourceMessage: ""
+    property bool sourceMessageIsError: false
 
     function reload() {
         for (let i = 0; i < rows.count; ++i) {
@@ -16,7 +18,6 @@ Item {
             }
         }
     }
-
 
     function applyAll() {
         let allOk = true
@@ -37,7 +38,6 @@ Item {
             : "Some values are invalid (highlighted in red); the others have been saved"
     }
 
-
     function resetAll() {
         root.settings.resetDefaults()
         reload()
@@ -45,13 +45,54 @@ Item {
         root.message = "Default values restored"
     }
 
+    // Remplit les champs de la source depuis les réglages enregistrés
+    function loadSource() {
+        sourceChoice.currentIndex = root.settings.sourceType === "mqtt" ? 1 : 0
+        hostField.text = root.settings.mqttHost
+        portField.text = String(root.settings.mqttPort)
+        hostField.invalid = false
+        portField.invalid = false
+    }
+
+    function applySourceChoice() {
+        const type = sourceChoice.currentIndex === 1 ? "mqtt" : "simulator"
+        const host = hostField.text.trim()
+        const port = portField.numericValue()
+
+        hostField.invalid = false
+        portField.invalid = false
+
+        if (!Number.isInteger(port)) {
+            portField.invalid = true
+            root.sourceMessageIsError = true
+            root.sourceMessage = "Port must be a whole number"
+            return
+        }
+
+        const ok = root.settings.setSource(type, host, port)
+
+        if (!ok) {
+            hostField.invalid = (host === "")
+            portField.invalid = (port < 1 || port > 65535)
+            root.sourceMessageIsError = true
+            root.sourceMessage = "Invalid source settings (check address and port 1-65535)"
+            return
+        }
+
+        root.sourceMessageIsError = false
+        root.sourceMessage = "Data source applied"
+    }
 
     onVisibleChanged: {
         if (visible) {
             root.message = ""
+            root.sourceMessage = ""
             reload()
+            loadSource()
         }
     }
+
+    Component.onCompleted: loadSource()
 
     ColumnLayout {
         anchors.fill: parent
@@ -70,7 +111,6 @@ Item {
             color: Theme.textSecondary
             font.pixelSize: 16
         }
-
 
         Repeater {
             id: rows
@@ -127,12 +167,68 @@ Item {
             }
         }
 
-
         Text {
             Layout.fillWidth: true
             visible: root.message !== ""
             text: root.message
             color: root.messageIsError ? Theme.critical : Theme.ok
+            font.pixelSize: 16
+            wrapMode: Text.WordWrap
+        }
+
+        // ---------- Source de données ----------
+        Text {
+            text: "Data Source"
+            color: Theme.textSecondary
+            font.pixelSize: 16
+            Layout.topMargin: 12
+        }
+
+        ChoiceBar {
+            id: sourceChoice
+            model: ["Simulator", "MQTT"]
+        }
+
+        RowLayout {
+            spacing: 16
+            enabled: sourceChoice.currentIndex === 1
+            opacity: enabled ? 1.0 : 0.4
+
+            NumberField {
+                id: hostField
+                label: "Broker address"
+                fieldWidth: 240
+            }
+
+            NumberField {
+                id: portField
+                label: "Port"
+            }
+        }
+
+        Rectangle {
+            implicitWidth: 130
+            implicitHeight: 34
+            radius: 6
+            color: Theme.accent
+
+            Text {
+                anchors.centerIn: parent
+                text: "Apply source"
+                color: Theme.window
+            }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: root.applySourceChoice()
+            }
+        }
+
+        Text {
+            Layout.fillWidth: true
+            visible: root.sourceMessage !== ""
+            text: root.sourceMessage
+            color: root.sourceMessageIsError ? Theme.critical : Theme.ok
             font.pixelSize: 16
             wrapMode: Text.WordWrap
         }

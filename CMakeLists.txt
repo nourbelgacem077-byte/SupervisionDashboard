@@ -7,6 +7,8 @@ find_package(Qt6 REQUIRED COMPONENTS Quick Sql)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick)
 
+find_package(Qt6 REQUIRED COMPONENTS Core Mqtt)
+
 qt_standard_project_setup(REQUIRES 6.10)
 
 # Content of downloaded design from Figma to Qt or similar
@@ -45,7 +47,11 @@ qt_add_qml_module(appSupervisionDashboard
         QML_FILES ThresholdRow.qml
         QML_FILES SettingsPage.qml
         QML_FILES NumberField.qml
-
+        SOURCES
+        SOURCES datasource.h
+        SOURCES mqttdatasource.h mqttdatasource.cpp
+        QML_FILES ConnectionBadge.qml
+        SOURCES measurementparser.h measurementparser.cpp
 
 )
 
@@ -61,8 +67,9 @@ set_target_properties(appSupervisionDashboard PROPERTIES
 )
 
 target_link_libraries(appSupervisionDashboard
-    PRIVATE Qt6::Quick Qt6::Sql
+    PRIVATE Qt6::Quick Qt6::Sql Qt6::Mqtt
 )
+
 install(TARGETS appSupervisionDashboard
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -100,3 +107,12 @@ qt_add_executable(tst_appsettings
 target_include_directories(tst_appsettings PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(tst_appsettings PRIVATE Qt6::Core Qt6::Test)
 add_test(NAME tst_appsettings COMMAND tst_appsettings)
+
+qt_add_executable(tst_mqttparsing
+    tests/tst_mqttparsing.cpp
+    measurementparser.cpp
+    measurementparser.h
+)
+target_include_directories(tst_mqttparsing PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(tst_mqttparsing PRIVATE Qt6::Core Qt6::Test)
+add_test(NAME tst_mqttparsing COMMAND tst_mqttparsing)

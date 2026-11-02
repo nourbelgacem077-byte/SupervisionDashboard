@@ -7,6 +7,7 @@ ColumnLayout {
     property string label: ""
     property alias text: input.text
     property bool invalid: false
+    property int fieldWidth: 110
 
     spacing: 4
 
@@ -23,7 +24,7 @@ ColumnLayout {
     }
 
     Rectangle {
-        implicitWidth: 110
+        implicitWidth: field.fieldWidth
         implicitHeight: 36
         radius: 6
         color: Theme.card

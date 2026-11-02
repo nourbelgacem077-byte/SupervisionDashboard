@@ -5,7 +5,7 @@ Item {
     id: root
 
     required property var alarmModel
-    required property var simulator
+    required property var source
 
     ColumnLayout {
         anchors.fill: parent
@@ -45,7 +45,7 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: root.simulator.injectOvervoltage()
+                    onClicked: root.source.injectOvervoltage()
                 }
             }
 
@@ -63,7 +63,7 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: root.simulator.injectOverheat()
+                    onClicked: root.source.injectOverheat()
                 }
             }
         }
