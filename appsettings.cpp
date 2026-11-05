@@ -1,7 +1,7 @@
 #include "appsettings.h"
 
 namespace {
-// Les quatre grandeurs, dans l'ordre d'affichage
+
 const QStringList &allQuantities()
 {
     static const QStringList list = {"Tension", "Courant", "Puissance", "Température"};

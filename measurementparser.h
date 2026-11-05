@@ -13,11 +13,9 @@ struct Measurement
     double temperature = 0.0;
 };
 
-// JSON {"voltage":..,"current":..,"power":..,"temperature":..}
-// Retourne false (et ne modifie pas out) si invalide.
 bool parseMeasurement(const QByteArray &message, Measurement &out);
 
-// Texte brut "online" / "offline"
+
 bool parseStatus(const QByteArray &message, bool &online);
 
 #endif // MEASUREMENTPARSER_H

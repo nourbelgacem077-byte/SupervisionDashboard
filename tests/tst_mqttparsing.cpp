@@ -164,8 +164,6 @@ void TestMqttParsing::status()
     QFETCH(bool, valid);
     QFETCH(bool, expectedOnline);
 
-    // Valeur de départ OPPOSÉE au résultat attendu : si parseStatus oublie
-    // d'écrire "online", le test échoue au lieu de passer par hasard.
     bool online = !expectedOnline;
 
     QCOMPARE(parseStatus(text, online), valid);
